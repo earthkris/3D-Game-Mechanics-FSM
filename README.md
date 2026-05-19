@@ -33,8 +33,11 @@ Engineered 3 unique enemy types driven by custom FSM logic tailored to their vis
 
 ```text
 📂 Scripts
-├── 📂 FSM                  # Abstract architecture blueprints (Entity.cs, State.cs)
-├── 📂 PlayerScript         # Modular player states and input processing
-├── 📂 EnemyScript          # Custom FSM state matrices for Enemy 1, 2, and 3
-├── 📂 projectileScripts    # Vector manipulation, pooling, and projectile velocity logic
-└── 📂 Data SO              # ScriptableObject structures for data-driven balancing
+├── 📂 FSM
+│   ├── 📄 Entity.cs         # Abstract base class for players and enemies
+│   ├── 📄 State.cs          # Base template class for all FSM states
+│   └── 📄 StateMachine.cs   # Core state switcher and logic runner
+├── 📂 PlayerScript
+├── 📂 EnemyScript
+├── 📂 projectileScripts
+└── 📂 Data SO
