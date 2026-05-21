@@ -15,15 +15,15 @@ The project focuses strictly on implementing a clean, modular **Finite-State Mac
 
 Architected 3 unique enemy types driven by custom state logic tailored to different gameplay mechanics:
 
-### 1. Melee Vanguard (Skeleton - `Enemy1.cs`)
+### 1. Melee Vanguard (Skeleton)
 - **Logic:** Manages execution flows for path patrolling, continuous target tracking, and conditional attack triggers (`E1_MeleeAttackState`, `E1_ChargeAttackState`).
 - **Defensive Interrupts:** Overrides knockback routines to enforce an immediate transition into a stun state (`E1_StunState`) only when the unit is not caught inside an active attack frame (`!isAttacking`).
 
-### 2. Kamikaze Proximity Agent (Suicide Bomb - `Enemy2.cs`)
+### 2. Kamikaze Proximity Agent (Bomb)
 - **Logic:** Implements a high-risk pursuit behavior running on modular configurations (`bombIdleState`, `bombRunState`, `bombExplodeState`).
 - **Mechanics:** Overrides standard NavMesh vectors to lock onto target transforms, executing custom runtime calculations to activate a visual area telegraph (`explodeIndicator`) right before triggering a self-detonation sequence.
 
-### 3. Ranged Vector Caster (Mage - `EnemyMage.cs`)
+### 3. Ranged Vector Caster (Mage)
 - **Logic:** Monitors player proximity vectors to maintain optimal combat distances, utilizing custom retreat or fallback spacing algorithms.
 - **Mechanics:** Couples distance checks with a dedicated projectile spawning pipeline (`projectilePrefab`) to control projectile initialization, velocity vectors, and trajectory setups.
 
@@ -33,18 +33,20 @@ Architected 3 unique enemy types driven by custom state logic tailored to differ
 
 ```text
 📂 Scripts
+├── 📂 Data SO
+│   └── 📄 D_Entity.cs             # ScriptableObject architecture managing enemy attribute parameters
+├── 📂 EnemyScript                 # Shared logic clusters and modular controllers for enemy actions
+│   ├── 📂 Bomb                    # Kamikaze pursuit vectors and self-detonation states (Enemy2)
+│   ├── 📂 Mage                    # Tactical ranged spacing and projectile casting states (EnemyMage)
+│   ├── 📂 Skeleton                # Melee patrolling, dynamic pursuit, and hit-stun states (Enemy1)
+│   ├── 📂 State                   # Secondary behavior state definitions specific to individual entities
+│   ├── 📄 AnimToEntity.cs         # Animation event triggers acting as FSM-to-Animator pipeline bridges
+│   └── 📄 GenerateEnamy.cs        # General runtime system managers and dynamic enemy spawner logic
 ├── 📂 FSM
-│   ├── 📄 Entity.cs             # Central abstract engine blueprint for all AI entities
-│   ├── 📄 EnemyState.cs         # Base constructor managing phase lifecycle hooks (Enter, Exit, Updates)
-│   └── 📄 EnemyStateMachine.cs  # Core state switcher and system execution engine
-├── ├── 📂 EnemyScript           # Distinct behavioral state logic clusters for AI units
-│   ├── 📄 AnimToEntity          # Animation event triggers and FSM-to-Animation pipeline bridges
-│   ├── 📄 GenerateEnemy         # General AI utilities, shared runtime handlers, or spawning logic
-│   ├── 📂 Mage (EnemyMage)      # Tactical ranged spacing and projectile casting states
-│   ├── 📂 Skeleton (Enemy1)     # Melee patrolling, dynamic pursuit, and hit-stun states
-│   └── 📂 SuicideBomb (Enemy2)  # Kamikaze pursuit vectors and self-detonation logic
-├── 📂 projectileScripts         # Vector displacement math and structural hit registration
-└── 📂 Data SO                   # ScriptableObject architecture managing attribute parameters
+│   ├── 📄 EnemyState.cs           # Base constructor managing phase lifecycle hooks (Enter, Exit, Updates)
+│   ├── 📄 EnemyStateMachine.cs    # Core state switcher and system execution engine
+│   └── 📄 Entity.cs               # Central abstract engine blueprint for all AI entities
+└── 📂 projectileScripts           # Vector displacement math and structural hit registration
 ```
 ## 🤝 Project Acknowledgments
 This repository highlights my personal technical milestone in core system programming and gameplay architecture prior to university admission. Other tertiary prototypes and connecting features from the original development timeline remain omitted to maintain an explicit focus on backend AI engineering quality.
