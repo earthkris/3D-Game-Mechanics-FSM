@@ -15,17 +15,18 @@ To emphasize clean software engineering practices, all 3D art assets, scene conf
 
 ### 1. Modular Finite-State Machine (FSM)
 At the core of the game's architecture is a flexible FSM system. Both player characters and enemy AI derive from a base `Entity` class, implementing state transitions via specialized C# scripts:
-- **State Decoupling:** Every behavior exists as an isolated class (e.g., `IdleState`, `PatrolState`, `AttackState`), ensuring clean script management and preventing "mega-scripts."
+- **State Decoupling:** Every behavior exists as an isolated class, ensuring clean script management and preventing "mega-scripts."
+- **State-to-Animation Synchronization:** Core movement parameters, combat frames, and state boundaries automatically handle the switching and blending of animator parameters during execution phases.
 
 ### 2. Advanced Enemy AI (3 Distinct Combat Variants)
-Engineered 3 unique enemy types driven by custom FSM logic tailored to their visual indicators and design requirements:
-- **Enemy 1 (Melee Skeleton):** Utilizes multi-stage logic for proximity alerts, path patrolling, and conditional physical attack triggers (`E1_MeleeAttackState`, `E1_ChargeAttackState`).
-- **Enemy 2 (Ranged Mage):** Manages tactical spacing mechanics coupled with custom projectile spawning routines, vector calculations, and hit registration.
-- **Enemy 3 (Suicide Bomb):** Executes a proximity-based trigger system. Once a player enters a defined radius and satisfies specific gameplay conditions, it breaks its standard routine to initiate a localized self-detonation sequence.
+Engineered 3 unique enemy types driven by custom FSM logic tailored to their visual indicators and mechanical requirements:
+- **Enemy 1 (Melee Skeleton - `Enemy1.cs`):** Utilizes multi-stage logic for proximity alerts, path patrolling, and conditional physical attack triggers. Overrides damage and knockback routines to enforce an `E1_StunState` transition only when the enemy is not locked in an active attack frame (`!isAttacking`).
+- **Enemy 2 (Kamikaze Bomb - `Enemy2.cs`):** Executes a proximity-based trigger system. Runs on dedicated state classes (`bombIdleState`, `bombRunState`, `bombExplodeState`) that override standard pathfinding to initiate a localized self-detonation sequence while actively managing a runtime visual area indicator.
+- **Enemy 3 (EnemyMage - `EnemyMage.cs`):** Manages ranged distance combat constraints. Operates on custom distance-checking loops that dictate tactical spacing, vector velocity calculations, and handling dedicated ranged instances via a modular projectile launch pipeline.
 
 ### 3. ScriptableObject Integration
-- Created structured data containers to separate stats from runtime behaviors. 
-- Allows game designers to adjust parameters like enemy vision radiuses or projectile velocity values on-the-fly inside the Unity Inspector without causing code side-effects.
+- Created structured data containers (`D_Entity`) to separate parameters from runtime behaviors. 
+- Allows game designers to adjust properties like enemy vision radiuses, acceleration profiles, or maximum health boundaries on-the-fly inside the Unity Inspector without causing code side-effects.
 
 ---
 
@@ -34,10 +35,16 @@ Engineered 3 unique enemy types driven by custom FSM logic tailored to their vis
 ```text
 📂 Scripts
 ├── 📂 FSM
-│   ├── 📄 Entity.cs         # Abstract base class for players and enemies
-│   ├── 📄 State.cs          # Base template class for all FSM states
-│   └── 📄 StateMachine.cs   # Core state switcher and logic runner
-├── 📂 PlayerScript
-├── 📂 EnemyScript
-├── 📂 projectileScripts
-└── 📂 Data SO
+│   ├── 📄 Entity.cs           # Central abstract engine blueprint for all combat units
+│   ├── 📄 EnemyState.cs       # Hierarchical constructor pattern for execution phases (Enter, Exit, Logic/Physics Update)
+│   └── 📄 EnemyStateMachine.cs # Core state container, runner, and transitional pipeline switcher
+├── 📂 PlayerScript            # Mechanics governing base player locomotion, jump physics, and standard combat inputs
+├── 📂 EnemyScript             # Distinct behavioral state logic clusters for Melee, Mage, and Bomb units
+├── 📂 projectileScripts       # Math frameworks managing target vectors, fly speeds, and hit registrations
+└── 📂 Data SO                 # ScriptableObject architecture managing immutable attribute parameters
+```
+## 🤝 Project Acknowledgments
+
+This repository is a technical showcase focusing on my individual implementation of the core AI architecture, State Machine, and player state mechanics. 
+
+However, the game was originally developed as a collaborative project that has since been discontinued.
