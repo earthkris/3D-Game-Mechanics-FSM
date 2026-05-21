@@ -36,10 +36,15 @@ Architected 3 unique enemy types driven by custom state logic tailored to differ
 ├── 📂 FSM
 │   ├── 📄 Entity.cs             # Central abstract engine blueprint for all AI entities
 │   ├── 📄 EnemyState.cs         # Base constructor managing phase lifecycle hooks (Enter, Exit, Updates)
-│   └── 📄 EnemyStateMachine.cs   # Core state switcher and system execution engine
-├── 📂 EnemyScript               # Behavioral state logic clusters for Melee, Mage, and Bomb units
+│   └── 📄 EnemyStateMachine.cs  # Core state switcher and system execution engine
+├── ├── 📂 EnemyScript           # Distinct behavioral state logic clusters for AI units
+│   ├── 📄 AnimToEntity          # Animation event triggers and FSM-to-Animation pipeline bridges
+│   ├── 📄 GenerateEnemy         # General AI utilities, shared runtime handlers, or spawning logic
+│   ├── 📂 Mage (EnemyMage)      # Tactical ranged spacing and projectile casting states
+│   ├── 📂 Skeleton (Enemy1)     # Melee patrolling, dynamic pursuit, and hit-stun states
+│   └── 📂 SuicideBomb (Enemy2)  # Kamikaze pursuit vectors and self-detonation logic
 ├── 📂 projectileScripts         # Vector displacement math and structural hit registration
-└── 📂 Data SO                 # ScriptableObject architecture managing attribute parameters
+└── 📂 Data SO                   # ScriptableObject architecture managing attribute parameters
 ```
 ## 🤝 Project Acknowledgments
 This repository highlights my personal technical milestone in core system programming and gameplay architecture prior to university admission. Other tertiary prototypes and connecting features from the original development timeline remain omitted to maintain an explicit focus on backend AI engineering quality.
