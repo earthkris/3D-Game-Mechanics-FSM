@@ -13,6 +13,12 @@ The project focuses strictly on implementing a clean, modular **Finite-State Mac
 
 ## 🚀 AI Implementation Breakdown
 
+<p align="center">
+  <img src="Images/enemies_showcase.png" width="750" alt="3D Enemy AI Variants Showcase">
+  <br>
+  <em>In-engine demonstration of the 3 unique AI variants managed by the core FSM framework.</em>
+</p>
+
 Architected 3 unique enemy types driven by custom state logic tailored to different gameplay mechanics:
 
 ### 1. Melee Vanguard (Skeleton)
