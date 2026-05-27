@@ -1,46 +1,44 @@
-# 3D Enemy AI Framework & UI System (C# Finite-State Machine)
+# 3D Enemy AI Framework & UI Health System
 
-This repository functions as a technical code showcase designed during my high school years to demonstrate foundational software engineering and architecture concepts within Unity/C# for portfolio evaluation. 
+This project is a technical C# showcase built in Unity to demonstrate clean code architecture, state-driven AI, and a responsive enemy UI system. 
 
-The project focuses strictly on implementing a clean, modular **Finite-State Machine (FSM)** framework and a **Reactive UI Health System** to govern diverse 3D enemy behaviors, isolating backend programming logic from visual assets.
-
----
-
-## 🛠️ Programming Concepts Demonstrated
-
-| Concept | Implementation Details | Key Unity Feature |
-| :--- | :--- | :--- |
-| **State Pattern Architecture** | Replaced monolithic scripts with a decoupled, class-based State Pattern to manage individual actor states independently. | `C# Inheritance & Polymorphism` |
-| **Data-Driven Design** | Isolated immutable stats (e.g., detection radiuses, movement speeds) from the runtime code loop, ensuring scalable balancing. | `ScriptableObjects` (`D_Entity`) |
-| **Game UI/UX Systems** | Developed responsive, real-time feedback loops to display gameplay critical stats without breaking decoupling rules. | `Canvas & Screen-Space Tracking` |
+The main goal was to separate core programming logic from game visuals using a modular **Finite-State Machine (FSM)** and an expandable **Inheritance-based UI System**.
 
 ---
 
-## 🚀 AI & System Implementation Breakdown
+## 🛠️ Core Programming Concepts Used
+
+* **State Pattern Architecture:** Replaced long, messy scripts with individual state classes to manage each enemy behavior independently.
+* **Object-Oriented Programming (OOP):** Used base classes (`Entity`, `HealthBar`) and polymorphism (method overriding) to easily create different types of enemies and custom UI logic.
+* **Data-Driven Design:** Used Unity `ScriptableObjects` (`D_Entity`) to store enemy stats (like speed and detection range) outside the scripts, making it easy to balance the game without touching the code.
+
+---
+
+## 🚀 AI & UI System Breakdown
 
 <p align="center">
   <img src="Images/enemies_showcase.png" width="750" alt="3D Enemy AI Variants Showcase">
   <br>
-  <em>In-engine demonstration of the 3 unique AI variants managed by the core FSM framework.</em>
+  <em>In-engine preview of the AI variants and UI systems in action.</em>
 </p>
 
-Architected 3 unique enemy types and an integrated UI feedback pipeline driven by custom logic tailored to different gameplay mechanics:
-
 ### ⚔️ 1. Melee Vanguard (Skeleton)
-* **State Logic:** Manages execution flows for path patrolling, continuous target tracking, and conditional attack triggers (`E1_MeleeAttackState`, `E1_ChargeAttackState`).
-* **Defensive Interrupts:** Overrides knockback routines to enforce an immediate transition into a stun state (`E1_StunState`) only when the unit is not caught inside an active attack frame (`!isAttacking`).
+* **Idle & Detection:** Starts in a stationary idle/standby state, remaining in place while monitoring the environment until the player enters its defined `agroRange`.
+* **Target Chasing:** Once triggered, it transitions smoothly into a pursuit behavior, tracking the player's position to execute conditional attacks (`E1_MeleeAttackState`, `E1_ChargeAttackState`).
+* **Stun Interrupt:** Instantly stops what it is doing and enters a stun state (`E1_StunState`) when hit, unless it is currently in the middle of an active attack animation frame.
 
-### 💣 2. Kamikaze Proximity Agent (Bomb)
-* **State Logic:** Implements a high-risk pursuit behavior running on modular configurations (`bombIdleState`, `bombRunState`, `bombExplodeState`).
-* **Mechanics:** Overrides standard NavMesh vectors to lock onto target transforms, executing custom runtime calculations to activate a visual area telegraph (`explodeIndicator`) right before triggering a self-detonation sequence.
+### 💣 2. Kamikaze Agent (Bomb)
+* **Chasing Target:** Locks onto the player's position and chases them down using custom NavMesh overrides.
+* **Explosion Telegraph:** Calculates the distance to the player to trigger a red warning circle indicator (`explodeIndicator`) right before self-detonation.
 
-### 🔮 3. Ranged Vector Caster (Mage)
-* **State Logic:** Monitors player proximity vectors to maintain optimal combat distances, utilizing custom retreat or fallback spacing algorithms.
-* **Mechanics:** Couples distance checks with a dedicated projectile spawning pipeline (`projectilePrefab`) to control projectile initialization, velocity vectors, and trajectory setups.
+### 🔮 3. Ranged Caster (Mage)
+* **Approach Logic:** Monitors player proximity vectors. If the player is spotted, it moves forward until it reaches its designated combat/firing range.
+* **Stationary Attack:** Once within range, it stops moving and stands ground to execute its casting routine, dealing damage from a distance.
+* **Projectile Pipeline:** Couples distance checks with a dedicated projectile spawning pipeline (`projectilePrefab`) to control projectile initialization, velocity vectors, and trajectory setups.
 
-### 📊 4. Reactive UI/UX Health Pipeline (Both Player & Enemy)
-* **Dynamic Feedback:** Programmed real-time, responsive Health Bars (HP Bars) for both the player and enemy variants to clearly communicate state damage transitions.
-* **Optimization:** Optimized Canvas scaling and tracking systems to ensure precise visual positioning relative to world-space actor transforms.
+### 📊 4. Smooth Billboard Health System
+* **Ease Lerp Effect (`HealthBar.cs`):** Features a double-slider system. When an enemy takes damage, the main bar drops instantly, while a secondary background bar catches up smoothly using `Mathf.Lerp` for a satisfying visual effect.
+* **Billboard Rotation (`EnemyHealthBar.cs`):** The health bar automatically calculates the vector from itself to the `MainCamera` every frame, ensuring the 2D UI always faces the player perfectly in 3D space.
 
 ---
 
@@ -49,16 +47,19 @@ Architected 3 unique enemy types and an integrated UI feedback pipeline driven b
 ```text
 📂 Scripts
 ├── 📂 Data SO
-│   └── 📄 D_Entity.cs             # ScriptableObject architecture managing enemy attribute parameters
-├── 📂 EnemyScript                 # Shared logic clusters and modular controllers for enemy actions
-│   ├── 📂 Bomb                    # Kamikaze pursuit vectors and self-detonation states (Enemy2)
-│   ├── 📂 Mage                    # Tactical ranged spacing and projectile casting states (EnemyMage)
-│   ├── 📂 Skeleton                # Melee patrolling, dynamic pursuit, and hit-stun states (Enemy1)
-│   ├── 📂 State                   # Secondary behavior state definitions specific to individual entities
-│   ├── 📄 AnimToEntity.cs         # Animation event triggers acting as FSM-to-Animator pipeline bridges
-│   └── 📄 GenerateEnamy.cs        # General runtime system managers and dynamic enemy spawner logic
+│   └── 📄 D_Entity.cs             # ScriptableObject managing base attributes for all enemies
+├── 📂 EnemyScript                 # Specific enemy logic clusters and state machines
+│   ├── 📂 Bomb                    # Kamikaze movement and self-detonation states (Enemy2)
+│   ├── 📂 Mage                    # Ranged approach, positioning, and spell casting states (EnemyMage)
+│   ├── 📂 Skeleton                # Melee standby, chasing, and hit-stun states (Enemy1)
+│   ├── 📂 State                   # Sub-state definitions tailored for individual entities
+│   ├── 📄 AnimToEntity.cs         # Animation events acting as bridges between Animator and FSM
+│   └── 📄 GenerateEnamy.cs        # Spawner system and runtime manager logic
 ├── 📂 FSM
-│   ├── 📄 EnemyState.cs           # Base constructor managing phase lifecycle hooks (Enter, Exit, Updates)
-│   ├── 📄 EnemyStateMachine.cs    # Core state switcher and system execution engine
-│   └── 📄 Entity.cs               # Central abstract engine blueprint for all AI entities
-└── 📂 projectileScripts           # Vector displacement math and structural hit registration
+│   ├── 📄 EnemyState.cs           # Base state class with lifecycle loops (Enter, Exit, Update)
+│   ├── 📄 EnemyStateMachine.cs    # Core engine that handles switching between states
+│   └── 📄 Entity.cs               # Abstract base class blueprint for all AI entities
+├── 📂 HealthBar
+│   ├── 📄 HealthBar.cs            # Base UI handler managing dynamic sliders and smooth Lerp tracking
+│   └── 📄 EnemyHealthBar.cs       # Derived UI class adding camera-facing billboard rotation
+└── 📂 projectileScripts           # Projectile displacement vectors and hit registration math
